@@ -11,6 +11,8 @@ Claude をオーケストレータとする数学論文(TeX)英文修正シス�
 - `tools/coinage_scan.py` — 造語候補スキャン(「the+複合名詞句」の承認外・低頻度句)。
 - `tools/glossary.py` — 単語帳生成(承認済み/emph定義/標準/先行研究/要審査に分類)。
 - `config.example.json` — プロジェクト設定例。
+- `rules/english-writing-rules.md` — 修正用の誤り型カタログ(実点検446件から作った10型+手続き規則)。
+- `rules/writing-guide.md` — 新規執筆・翻訳用の文体仕様(声と時制・骨格・構成・用語衛生・禁止事項)。プロジェクト固有の規則ファイルが無い場合の既定。
 
 ## 前提
 
