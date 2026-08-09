@@ -13,6 +13,7 @@ Claude をオーケストレータとする数学論文(TeX)英文修正シス�
 - `config.example.json` — プロジェクト設定例。
 - `rules/english-writing-rules.md` — 修正用の誤り型カタログ(実点検446件から作った10型+手続き規則)。
 - `rules/writing-guide.md` — 新規執筆・翻訳用の文体仕様(声と時制・骨格・構成・用語衛生・禁止事項)。プロジェクト固有の規則ファイルが無い場合の既定。
+- `rules/phrasebook.md` — 機能別フレーズ集(Trzeciak, Writing Mathematical Papers in English の抜粋。原本 PDF は同梱せずパス参照)。**規則の優先順位**: プロジェクト規約・writing-guide > phrasebook(相違点は phrasebook 末尾に列挙。文体の禁止事項は guide が勝つ)。
 
 ## 前提
 
