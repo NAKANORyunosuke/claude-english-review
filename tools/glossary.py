@@ -127,7 +127,7 @@ for t, ls in merged.items():
 		continue
 	buckets[classify(t)].append((t, sorted(set(ls))))
 
-with io.open(OUT, "w", encoding="utf-8", newline="\n") as f:
+with io.open(OUT, "w", encoding="utf-8", newline="\r\n") as f:
 	f.write("# 単語帳(2026-08-09)paper-obstruction.tex の技術的名詞句全数\n\n")
 	f.write("分類基準: 承認済み(CLAUDE.md)/ emph定義(本文で定義)/ 標準(教科書用語)/ 先行研究(OS25・DMM12 原文で確認)/ 要審査(統廃合候補)。\n\n")
 	for b in ("要審査", "先行研究", "emph定義", "承認済み", "標準"):
