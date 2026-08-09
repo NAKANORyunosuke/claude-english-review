@@ -1,0 +1,23 @@
+{
+	"project": "paper-obstruction",
+	"tex": "D:/Workspace/TeX/Nagamine/paper-obstruction/paper-obstruction.tex",
+	"derived": ["D:/Workspace/TeX/Nagamine/paper-obstruction/paper-obstruction-arxiv.tex"],
+	"rules": "D:/Workspace/TeX/Nagamine/english-writing-rules.md",
+	"term_rules": "D:/Workspace/TeX/Nagamine/terminology-rules.md",
+	"audit": "py C:/Users/toppo/.claude/skills/tex-style-audit/audit_tex.py {tex} --banned C:/Users/toppo/.claude/skills/tex-style-audit/banned-terms-nagamine.txt",
+	"build": "pdflatex -synctex=1 -interaction=nonstopmode -halt-on-error {tex}",
+	"build_passes": 2,
+	"chunk_lines": 480,
+	"approved_terms": [
+		"distinguished collection", "lattice perturbation", "lattice-perturbation obstruction module",
+		"moving integral set", "binary", "moving-binary", "support fiber", "support cell",
+		"admissible", "block-sum family", "shared-column family", "repeated-row family",
+		"fake exponent", "negative support family", "fake-exponent sector"
+	],
+	"prior_works": [
+		{"key": "OS25", "arxiv": "2504.02501"},
+		{"key": "DMM12", "arxiv": "1007.4225"}
+	],
+	"findings_dir": "<scratchpad>/encheck",
+	"archive_dir": "D:/Workspace/TeX/Nagamine/評価"
+}
