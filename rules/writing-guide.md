@@ -29,9 +29,10 @@
 
 ## 記号と用語の衛生
 
-- 記号は使用前に \emph で定義。一物一名(同じ対象は毎回同じ語。elegant variation 禁止)。記法の設計(アクセント・添字・予約文字・命名)は `notation-rules.md`。
+- 記号は使用前に定義する。一物一名(同じ対象は毎回同じ語。elegant variation 禁止)。記法の設計(アクセント・添字・予約文字・命名)は `notation-rules.md`。
+- **\emph で用語を定義しない。**新概念に名前を与えるのではなく、記号+一般名詞に展開する(`Set \(N=\dots\). Then \(N\) ...`)。\emph は強調と証明のステップ名にだけ使う。
 - Introduction と主定理で使う記号はその場で定義する。"see Section X for the definition of ..." で後回しにしない。
-- 技術的な複合名詞句は書く前に用語規則の関門を通す: 標準用語か → 承認済みか → \emph で定義する新概念か → どれでもなければ**書かず**に記号+一般名詞か普通の文に展開。
+- 技術的な複合名詞句は書く前に用語規則の関門を通す: 標準用語か → 承認済みか → どちらでもなければ**書かず**に記号+一般名詞か普通の文に展開。新概念に名前を与える枝は無い。
 - 引用結果に名前を発明しない(番号で引く)。既出構成の短縮句を名前化しない。ad hoc なハイフン連結をしない。
 - 先行研究の用語は原文の形を実測して使う(例: DMM の標準形は basic Nilsson solution・domain of convergence)。
 
@@ -39,7 +40,7 @@
 
 - 評価形容詞(important, interesting, remarkable, novel ...)、ヘッジ(seems, perhaps, essentially ...)、読者管理修辞(it is worth noting, unfortunately ...)、文頭 Clearly/Obviously/Indeed。
 - 対比の while/whereas(→ but か2文に分割)。文頭 Although(→ Though)。
-- ":=" (→ define/put/set + =)。定理環境の括弧題。数式記号の 's 複数形。
+- ":=" (→ define/put/set + =)。定理環境の括弧題。数式記号の 's 複数形。\emph による用語定義。
 
 ## 日本人が特に誤る点(機械的に自己検査)
 
