@@ -2,12 +2,12 @@
 
 本文の英語を1文でも書く・直すときに適用する。
 根拠は 2026-08-07 に Paper I 正本 5944 行を12分割して行った全文点検で、446 件の指摘が出た。
-以下の型は**実際にこの原稿で起きたもの**であり、頻度順に並べてある。
+1.1--1.10 は**実際にこの原稿で起きたもの**であり、頻度順に並べてある。1.11 は文体方針として足したもの。
 用語(造語禁止)は `terminology-rules.md`、体裁は `CLAUDE.md` 規約1--14 を先に満たすこと。
 
 ---
 
-## 1. 書く前に守る10型
+## 1. 書く前に守る11型
 
 ### 1.1 代名詞に先行詞を与える(41件・最多)
 
@@ -97,6 +97,23 @@
 - 良い: `Theorem X forces the linear forms to be a regular sequence.`
 - 悪い: `the obstruction dimension is not monotone` → 良い `the obstruction dimension need not be monotone`
 
+### 1.11 主語を短くする
+
+**動詞に届くまでに8語を超える主語**は書き換える。手段は次の3つで、上から順に試す。
+
+1. `we` を主語にして長い名詞句を動詞の後ろへ回す。
+2. 仮主語 `It` を立てて `that` 節を後ろへ送る(`It follows from X that ...` / `It is equivalent to ... that ...`)。
+3. 受動態にして長い名詞句を `by` 句へ送る。命名・輸入以外の受動態はここでだけ許す(`writing-guide.md` の受動態制限の例外)。
+
+- 悪い: `That the annihilator of \(\overline e_i\) equals \(G_i\) for every \(i\) follows from \eqref{eq:one-block-G}.`
+- 良い: `It follows from \eqref{eq:one-block-G} that the annihilator of \(\overline e_i\) equals \(G_i\) for every \(i\).`
+- 悪い: `A column permutation and an invertible row transformation preserving the parallel classes of \(A\) put the matrix into the form \eqref{eq:normal-form}.`
+- 良い: `The matrix is put into the form \eqref{eq:normal-form} by a column permutation and an invertible row transformation preserving the parallel classes of \(A\).`
+- 悪い: `The failure of taking a colon after applying \(\Phi_0\) at each factor of \(e\) is measured by \(\mathfrak D_{\mathcal N}(e)\).`
+- 良い: `We measure by \(\mathfrak D_{\mathcal N}(e)\) the failure of taking a colon after applying \(\Phi_0\) at each factor of \(e\).`
+
+短くできない主語は、その名詞句自体を記号で置く(`Set \(N=\dots\). Then \(N\) ...`)。
+
 ---
 
 ## 2. その他に多かったもの
@@ -131,4 +148,4 @@ py "C:\Users\toppo\.claude\skills\tex-style-audit\audit_tex.py" <file.tex> --ban
 - audit が `CLEAN` であること。
 - `pdflatex` を2回通し、**Overfull 0・未定義参照 0** であること。
 - 正本を直したら arXiv 版へ同じ数学的内容を反映すること(`CLAUDE.md` 同期チェックリスト)。
-- 自分が書いた文を読み返し、上の10型を1つずつ当てること。特に 1.1(代名詞)と 1.5(while)は機械的に grep できる。
+- 自分が書いた文を読み返し、上の11型を1つずつ当てること。特に 1.1(代名詞)と 1.5(while)は機械的に grep できる。1.11(長い主語)は最初の動詞までの語数を数える。

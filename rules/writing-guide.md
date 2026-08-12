@@ -6,7 +6,7 @@
 ## 声と時制
 
 - 数学的行為の主語はすべて "we"。現在形で通す(論文内の既出参照のみ現在完了、歴史的事実のみ過去形)。
-- 受動態は命名・輸入にのみ: "is defined by", "is called", "is denoted by", "It is shown in [X] that"。
+- 受動態は命名・輸入と長主語の回避にのみ: "is defined by", "is called", "is denoted by", "It is shown in [X] that"。
 - 法助動詞は "can" が基本。論理的必然は "must"(should は使わない)。「〜とは限らない」は "need not"。
 - 先行研究の数学的結果は現在形: "X proves ...", "Theorem Y states ..."。
 
@@ -18,6 +18,7 @@
 - ディスプレイ式の直後に "where" インベントリで全記号を列挙する。式の意味づけは ", which implies/yields that ..."。
 - 証明は即行動で開始("Proof. We set ...")、段階は "First, ... Next, ... Finally, ..."、対称ケースは "in a similar way"、終端は □。
 - 文を記号で始めない。ディスプレイ式にも句読点。1文=1行(TeX ソース)。
+- 主語は動詞に届くまで8語以内。超えたら "we" 主語に組み替える → 仮主語 "It ... that ..." → 受動態で "by" 句へ送る、の順に試す(`english-writing-rules.md` 1.11)。
 
 ## 構成
 
