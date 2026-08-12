@@ -22,14 +22,15 @@
 
 ## 構成
 
-- Abstract: 2〜5文、全文 "We ..."。背景・動機・文献番号なし。
+- Abstract: 2〜5文。背景・動機・文献番号なし。自分の結果の文は "We ..."、先行研究に触れる文は受動態にして人名を主語にしない("Its inverse is expressed projectively by ...")。
 - Introduction: コールドオープン(定義か式)→ 先行研究は受動態1文+文献括弧 → "However, ..." → "In this paper, we ..." → 定理番号を本文に埋め込む。ロードマップ段落は書かない。
 - セクション冒頭に1文の目的宣言。恒常仮定は "Throughout this paper, we assume ..."。締めの文は書かない。
 - 既知の結果は "Fact 2.3 ([X])." で輸入。補足は番号付き Remark に隔離。
 
 ## 記号と用語の衛生
 
-- 記号は使用前に \emph で定義。一物一名(同じ対象は毎回同じ語。elegant variation 禁止)。
+- 記号は使用前に \emph で定義。一物一名(同じ対象は毎回同じ語。elegant variation 禁止)。記法の設計(アクセント・添字・予約文字・命名)は `notation-rules.md`。
+- Introduction と主定理で使う記号はその場で定義する。"see Section X for the definition of ..." で後回しにしない。
 - 技術的な複合名詞句は書く前に用語規則の関門を通す: 標準用語か → 承認済みか → \emph で定義する新概念か → どれでもなければ**書かず**に記号+一般名詞か普通の文に展開。
 - 引用結果に名前を発明しない(番号で引く)。既出構成の短縮句を名前化しない。ad hoc なハイフン連結をしない。
 - 先行研究の用語は原文の形を実測して使う(例: DMM の標準形は basic Nilsson solution・domain of convergence)。

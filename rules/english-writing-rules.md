@@ -93,6 +93,14 @@
 定理が導く結論を「要求する」と書かない。
 反例が1つあるだけの性質を「常に成り立たない」と書かない。
 
+**先行研究から輸入した対象を `we fix` / `we choose` で書かない。** 自分が固定したものと引いてきたものを、動詞で区別する。
+
+- 悪い: `In this section, we fix the periods by choosing the differential \(dz/w\) and the homology marking.`(サイクル・周期写像は MT04 から引いている)
+- 良い: `In this section, we fix the branch of \(w\) and recall the automorphic forms \(f_J\) of \cite{MMN07}.`
+- 判定手順: その対象の定義箇所に `\cite` が付いているか、`Fact` 環境で輸入されていないかを確認する。付いていれば `recall` / `is defined in \cite{X}` を使う。
+- 先行研究の**規約を採用する**ときは `we fix` のままでよいが、採用元を付ける: `we fix the branch of \(w\) as in \cite[Section 2]{MT04} by ...`。明示形が別の文献にあるならそれも分けて引く(`this explicit form is given in \cite[Proposition 1]{MT02}`)。
+- 引用の落ちた導入文は、その対象が後の `Fact` から `as fixed above` の形で参照されているときに見つかる。`Fact` の引用先と、参照先の地の文の引用の有無を突き合わせる。
+
 - 悪い: `Theorem X requires the linear forms to form a regular sequence.`(定理は仮定していない、導いている)
 - 良い: `Theorem X forces the linear forms to be a regular sequence.`
 - 悪い: `the obstruction dimension is not monotone` → 良い `the obstruction dimension need not be monotone`
@@ -121,7 +129,13 @@
 - 目的語の欠落: 悪い `is equivalent to vanishing` → 良い `is equivalent to the vanishing of \(\mathfrak D_{\mathcal N}(e)\)`
 - 先行研究は現在形: 悪い `this method was developed by Saito` → 良い `this method is developed by Saito`
 - コンマ列挙を `and` で閉じる: 悪い `\(t_3^2+t_3t_6, \qquad 2t_3^2+t_3t_6\)` → 良い `... \qquad\text{and}\qquad ...`
-- マクロの不統一: `\mathbb Z` と `\Z` を混在させない(本文のマクロに合わせる)。
+- マクロの不統一・記号の設計は `notation-rules.md` へ移した(`\mathbb Z` と `\Z` の混在、添字、アクセント、命名)。
+
+以下は Chapter 2 の改訂で人間が直した型(指摘データ由来ではない)。
+
+- 引用は番号付きの結果で引く: 悪い `\cite[pp.~120--136]{Mum07b}` → 良い `\cite[Proposition 3.6]{Fay73}`。ページ範囲でしか引けない文献は、引き先を変えられないか検討する。
+- 既出の等式を言い換えるだけの文は削る: 悪い `Since \(\vartheta_{00}(i) = \pi^{1/4}/\varGamma(3/4)\), the constant \(\kappa\) is expressed in terms of \(\varGamma(3/4)\).` → 良い `Here we use the formula \(\vartheta_{00}(i) = \pi^{1/4}/\varGamma(3/4)\) to express \(\kappa\) in terms of \(\varGamma(3/4)\).`(2文が1文になる)
+- 自分の正規化の意義を述べる文は削る: 悪い `The constant \(\kappa\) fixes the values of the forms for the normalization of the periods made in Section~\ref{sec:preliminaries}, and it permits comparison with ...` → 良い `The constant \(\kappa\) permits comparison with ...`
 
 ---
 

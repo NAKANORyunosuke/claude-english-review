@@ -12,6 +12,7 @@ Claude をオーケストレータとする数学論文(TeX)英文修正シス�
 - `tools/glossary.py` — 単語帳生成(承認済み/emph定義/標準/先行研究/要審査に分類)。
 - `config.example.json` — プロジェクト設定例。
 - `rules/english-writing-rules.md` — 修正用の誤り型カタログ(実点検446件から作った10型+手続き規則)。
+- `rules/notation-rules.md` — 記法の設計と点検(アクセント・添字・予約文字・命名・マクロ・台帳運用)。記号は序文で決まり本文へ波及するため、英文点検より先に確定する。
 - `rules/writing-guide.md` — 新規執筆・翻訳用の文体仕様(声と時制・骨格・構成・用語衛生・禁止事項)。プロジェクト固有の規則ファイルが無い場合の既定。
 - `rules/phrasebook.md` — 機能別フレーズ集(Trzeciak, Writing Mathematical Papers in English の抜粋。原本 PDF は同梱せずパス参照)。**規則の優先順位**: プロジェクト規約・writing-guide > phrasebook(相違点は phrasebook 末尾に列挙。文体の禁止事項は guide が勝つ)。
 
@@ -25,7 +26,7 @@ Claude をオーケストレータとする数学論文(TeX)英文修正シス�
 
 1. `config.example.json` を対象プロジェクト用にコピーして書き換える。
 2. Claude に「PLAYBOOK.md に従って <config> の論文の英文修正を回して」と指示する。
-3. Claude がフェーズ A(分割点検)→ B(用語・造語)→ C(同期・検証)を収束まで反復する。
+3. Claude がフェーズ 0(序文・記号の確定)→ A(分割点検)→ B(用語・造語・構成)→ C(同期・検証)を収束まで反復する。
 
 ## 設計原則
 
