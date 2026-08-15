@@ -65,8 +65,10 @@ def run(cfg_path, mode):
 	for old, new in cfg.get("globals", []):
 		print(f"global '{old[:32]}' x{body.count(old)}")
 		body = body.replace(old, new)
-	# Windows 前提。読み込みは universal newlines で "\n" に潰れるので、CRLF で書き戻す。
-	io.open(path, "w", encoding="utf-8", newline="\r\n").write(body)
+	# 読み込みは universal newlines で "\n" に潰れるので、元ファイルの改行で書き戻す。
+	raw = io.open(path, "rb").read()
+	nl = "\r\n" if raw.count(b"\r\n") > raw.count(b"\n") - raw.count(b"\r\n") else "\n"
+	io.open(path, "w", encoding="utf-8", newline=nl).write(body)
 	print("applied")
 	return 0
 
