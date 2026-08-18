@@ -10,6 +10,7 @@ Claude をオーケストレータとする数学論文(TeX)英文修正シス�
 - `tools/apply_fixes.py` — 採用指摘の一括適用器(平坦一致アンカー、dry-run/apply)。
 - `tools/coinage_scan.py` — 造語候補スキャン(「the+複合名詞句」の承認外・低頻度句)。
 - `tools/glossary.py` — 単語帳生成(承認済み/emph定義/標準/先行研究/要審査に分類)。
+- `tools/depgraph.py` — 依存グラフと番号系列の点検(番号の欠番・重複、ラベルの無い番号付き環境、結果間の前方依存、入次数0)。印字番号は `.aux` から取る。`py tools/depgraph.py <file.tex>`。
 - `config.example.json` — プロジェクト設定例。
 - `rules/english-writing-rules.md` — 修正用の誤り型カタログ(実点検446件から作った10型+手続き規則)。
 - `rules/notation-rules.md` — 記法の設計と点検(アクセント・添字・予約文字・命名・マクロ・台帳運用)。記号は序文で決まり本文へ波及するため、英文点検より先に確定する。
