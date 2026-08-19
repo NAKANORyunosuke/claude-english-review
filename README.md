@@ -6,12 +6,13 @@ Claude をオーケストレータとする数学論文(TeX)英文修正シス�
 ## 構成
 
 - `PLAYBOOK.md` — オーケストレータ(Claude 本体)が従う実行手順書。フェーズ・裁定基準・収束条件・同期手順。
-- `templates/` — 並列サブエージェントに渡すプロンプト雛形。`{{...}}` を置換して使う。
+- `templates/` — 並列サブエージェントに渡すプロンプト雛形。`{{...}}` を置換して使う。`templates/handover.md` だけは例外で、対象リポジトリに1本置く引き継ぎ資料の雛形。
 - `tools/apply_fixes.py` — 採用指摘の一括適用器(平坦一致アンカー、dry-run/apply)。
 - `tools/coinage_scan.py` — 造語候補スキャン(「the+複合名詞句」の承認外・低頻度句)。
 - `tools/glossary.py` — 単語帳生成(承認済み/emph定義/標準/先行研究/要審査に分類)。
 - `tools/ledger_gate.py` — 記号を変えたのに台帳を直していないコミットを止めるゲート。原稿の記号集合の変化だけを見るので偽陽性がほぼ無く、記号を触っていなければ何も言わない。`py tools/ledger_gate.py <file.tex> <ledger.md>`。
 - `tools/ledger_check.py` — 台帳と原稿の突き合わせ。既にある乖離を洗う。偽陽性が残るので基準値と比べる。
+- `tools/review_status.py` — 報告書の裁定表を全部読んで横断の残件・棄却を出す。`--write` で `HANDOVER.md` のマーカーの間を差し替える。ハッシュの書き漏れと状態の表記揺れも捕まえる。`py tools/review_status.py <review-dir> [--write]`。
 - `tools/depgraph.py` — 依存グラフと番号系列の点検(番号の欠番・重複、ラベルの無い番号付き環境、結果間の前方依存、入次数0)。印字番号は `.aux` から取る。`py tools/depgraph.py <file.tex>`。
 - `config.example.json` — プロジェクト設定例。
 - `rules/english-writing-rules.md` — 修正用の誤り型カタログ(実点検446件から作った10型+手続き規則)。

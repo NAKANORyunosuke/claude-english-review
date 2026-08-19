@@ -19,5 +19,7 @@
 		{"key": "DMM12", "arxiv": "1007.4225"}
 	],
 	"findings_dir": "<scratchpad>/encheck",
+	"handover": "<findings_dir>/HANDOVER.md",
+	"review_status": "py <system>/tools/review_status.py <findings_dir> --write",
 	"archive_dir": "D:/Workspace/TeX/Nagamine/評価"
 }
