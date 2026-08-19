@@ -43,9 +43,27 @@ WRAP = "mathcal|mathfrak|mathbb|widetilde|widehat|hat|tilde|dot|bar|overline"
 SYM = (r"(?:\\(?:" + WRAP + r")\{[A-Za-z]\}|\\[A-Za-z]+|(?<![A-Za-z\\])[A-Za-z])")
 TOK = re.compile(SYM + r"(?:_(?:\{[A-Za-z0-9,+\\-]{1,6}\}|[A-Za-z0-9]))?")
 
+# 地の文には1文字の語頭が現れる（節見出しに Value と書くと V が「新しい記号」になる）。
+# 地の文を書き換えただけでゲートが落ちると無視されるようになるので、数式の中だけを見る。
+MATH_ENVS = r"equation|align|gather|multline|eqnarray|displaymath"
+MATH = [
+	re.compile(r"\\\((.*?)\\\)", re.S),
+	re.compile(r"\\\[(.*?)\\\]", re.S),
+	re.compile(r"\\begin\{(?:" + MATH_ENVS + r")\*?\}(.*?)\\end\{(?:" + MATH_ENVS + r")\*?\}", re.S),
+]
+# 数式の中の参照名と地の文の埋め込みは記号ではない。
+NOISE = re.compile(r"\\(?:label|ref|eqref|cite\w*|text|textrm|mbox|operatorname)\s*(?:\[[^\]]*\])?\{[^{}]*\}")
+
 
 def run(args):
 	return subprocess.run(args, capture_output=True, text=True, encoding="utf-8", errors="replace")
+
+
+def math_only(text):
+	out = []
+	for pat in MATH:
+		out += pat.findall(text)
+	return "\n".join(NOISE.sub(" ", s) for s in out)
 
 
 def symbols(text):
@@ -53,6 +71,7 @@ def symbols(text):
 	i = text.find("\\begin{document}")
 	if i >= 0:
 		text = text[i:]
+	text = math_only(text)
 	text = re.sub(r"\\(" + WRAP + r")\s+([A-Za-z])(?![A-Za-z])", r"\\\1{\2}", text)
 	out = collections.Counter()
 	for m in TOK.finditer(text):
