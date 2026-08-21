@@ -1,17 +1,28 @@
 # -*- coding: utf-8 -*-
-# 注意: 冒頭の定数(対象パス・承認/標準語リスト)はプロジェクトごとに書き換えて使う。
 # 造語候補スキャン: 地の文の「the + 2〜3語」複合名詞句を数え、
 # 承認済み・常用語のみの句を除いた低頻度句を列挙する。
+#
+# 使い方: py coinage_scan.py <tex> [承認語ファイル]
+#   承認語ファイルは1行1語。省略すると下の APPROVED を使う。
+#
+# 承認語はプロジェクトごとに違うので、外部ファイルで渡すほうがよい。下の APPROVED は
+# 例であり、**廃止した用語が残っていると、その語が造語候補から除外されて検出されない**。
+# 2026-08-22 に、既に廃止済みの `lattice perturbation` が残ったままなのが見つかった。
+# 用語を廃止したら banned リストに足すだけでなく、ここからも消す。
 import io
 import re
 import sys
 from collections import Counter
 
 sys.stdout.reconfigure(encoding="utf-8")
-P = r"D:\Workspace\TeX\Nagamine\paper-obstruction\paper-obstruction.tex"
+
+if len(sys.argv) < 2:
+	print("使い方: py coinage_scan.py <tex> [承認語ファイル]")
+	sys.exit(2)
+P = sys.argv[1]
 
 APPROVED = [
-	"distinguished collection", "lattice perturbation", "obstruction module",
+	"distinguished collection", "obstruction module",
 	"moving integral set", "negative support", "support famil", "fake exponent",
 	"block-sum famil", "shared-column famil", "repeated-row famil", "support fiber",
 	"support cell", "boundary monomial", "support monomial", "comparison ideal",
@@ -37,6 +48,11 @@ APPROVED = [
 	"intrinsic perturbation", "coefficient series", "constant term",
 	"recession ray", "row span", "base exponent", "boundary class",
 ]
+
+if len(sys.argv) > 2:
+	APPROVED = [l.strip().lower() for l in io.open(sys.argv[2], encoding="utf-8")
+	            if l.strip() and not l.lstrip().startswith("#")]
+
 COMMON = set("""a an and of in on for with to by at the this that these those is are was be been
 first second third last next same other two three four five one only such all every each
 new given fixed chosen following preceding above below right left open closed nonzero zero

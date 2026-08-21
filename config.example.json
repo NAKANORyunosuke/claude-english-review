@@ -1,25 +1,34 @@
 {
-	"project": "paper-obstruction",
-	"tex": "D:/Workspace/TeX/Nagamine/paper-obstruction/paper-obstruction.tex",
-	"derived": ["D:/Workspace/TeX/Nagamine/paper-obstruction/paper-obstruction-arxiv.tex"],
-	"rules": "D:/Workspace/TeX/Nagamine/english-writing-rules.md",
-	"term_rules": "D:/Workspace/TeX/Nagamine/terminology-rules.md",
-	"audit": "py C:/Users/toppo/.claude/skills/tex-style-audit/audit_tex.py {tex} --banned C:/Users/toppo/.claude/skills/tex-style-audit/banned-terms-nagamine.txt",
+	"_comment": [
+		"雛形。プロジェクトごとに複製して値を埋める。パスは実在するものへ直すこと。",
+		"tex には投稿する正本を書く。研究ノートや旧版を指したまま使うと、点検が",
+		"公開しない文書に向かって空回りする。derived は正本から生成する派生物。",
+		"approved_terms は廃止した用語を残さない。残すと coinage_scan.py がその語を",
+		"造語候補から除外してしまい、廃止語の残存を検出できない。"
+	],
+	"project": "<プロジェクト名>",
+	"tex": "<repo>/paper/paper-arxiv.tex",
+	"derived": [],
+	"rules": "<plugin>/rules/english-writing-rules.md",
+	"term_rules": "<plugin>/rules/terminology-rules.md",
+	"notation_rules": "<plugin>/rules/notation-rules.md",
+	"style_source": [
+		"<EnglishBible>/mathematical-writing.md",
+		"<EnglishBible>/matsumoto-style-guide.md"
+	],
+	"ledger": "<repo>/paper/notation-ledger.md",
+	"audit": "py <skills>/tex-style-audit/audit_tex.py {tex} --banned <skills>/tex-style-audit/banned-terms-<project>.txt",
 	"build": "pdflatex -synctex=1 -interaction=nonstopmode -halt-on-error {tex}",
 	"build_passes": 2,
 	"chunk_lines": 480,
-	"approved_terms": [
-		"distinguished collection", "lattice perturbation", "lattice-perturbation obstruction module",
-		"moving integral set", "binary", "moving-binary", "support fiber", "support cell",
-		"admissible", "block-sum family", "shared-column family", "repeated-row family",
-		"fake exponent", "negative support family", "fake-exponent sector"
-	],
-	"prior_works": [
-		{"key": "OS25", "arxiv": "2504.02501"},
-		{"key": "DMM12", "arxiv": "1007.4225"}
-	],
-	"findings_dir": "<scratchpad>/encheck",
+	"approved_terms": [],
+	"prior_works": [],
+	"findings_dir": "<repo>/paper/review",
 	"handover": "<findings_dir>/HANDOVER.md",
-	"review_status": "py <system>/tools/review_status.py <findings_dir> --write",
-	"archive_dir": "D:/Workspace/TeX/Nagamine/評価"
+	"process_defects": "<findings_dir>/PROCESS-DEFECTS.md",
+	"review_status": "py <plugin>/tools/review_status.py <findings_dir> --write",
+	"ledger_gate": "py <plugin>/tools/ledger_gate.py {tex} {ledger}",
+	"symbol_depgraph": "py <plugin>/tools/symbol_depgraph.py {tex}",
+	"apply_renames": "py <plugin>/tools/apply_renames.py {tex} <renames.json> --apply",
+	"archive_dir": "<追跡外の作業領域>"
 }

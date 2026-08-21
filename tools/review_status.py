@@ -33,9 +33,27 @@ def norm(state):
 	return "不明", s
 
 
+INLINE = re.compile(r"\\\(.*?\\\)|`[^`]*`|\\\|")
+
+
 def cells(line):
+	"""表の行をセルに割る。インライン数式とコードの中の | は区切りに数えない。
+
+	数学の報告書には \\(|\\bu|\\) のような絶対値が普通に入る。素朴に split すると
+	1行が余計に割れ、内容欄が壊れたまま HANDOVER に貼られる。
+	"""
 	m = ROW.match(line)
-	return [c.strip() for c in m.group(1).split("|")] if m else None
+	if not m:
+		return None
+	keep = []
+
+	def mask(mm):
+		keep.append(mm.group(0))
+		return "\x00%d\x00" % (len(keep) - 1)
+
+	masked = INLINE.sub(mask, m.group(1))
+	unmask = lambda s: re.sub(r"\x00(\d+)\x00", lambda mm: keep[int(mm.group(1))], s)
+	return [unmask(c).strip() for c in masked.split("|")]
 
 
 def declares_commits(path):
@@ -51,6 +69,10 @@ def declares_commits(path):
 	return False
 
 
+def is_verdict_head(c):
+	return "件" in c[0] and any("状態" in x for x in c)
+
+
 def parse(path):
 	"""裁定表の行を (件, 状態, 正規化前の状態, 残りの列) で返す。"""
 	out, in_table, seen = [], False, False
@@ -61,7 +83,7 @@ def parse(path):
 				break
 			continue
 		if not in_table:
-			if not seen and "件" in c[0] and any("状態" in x for x in c):
+			if not seen and is_verdict_head(c):
 				in_table, seen = True, True
 			continue
 		if all(set(x) <= set("-: ") for x in c):
@@ -71,6 +93,25 @@ def parse(path):
 		key, raw = norm(c[1])
 		out.append((c[0], key, raw, " / ".join(x for x in c[2:] if x)))
 	return out
+
+
+def extra_verdict_tables(path):
+	"""裁定表が2つ以上あれば、2つ目以降のヘッダ行番号を返す。
+
+	PLAYBOOK は「裁定表は先頭に1つだけ置く」と定める。分けると parse() が
+	2つ目を読まないので、そこに書いた指摘が丸ごと集計から落ちる。
+	2026-08-22 に実際に12件が落ちた（71件の報告書が58件と数えられた）。
+	黙って落とすと気づけないので警告する。
+	"""
+	heads, seen = [], False
+	for n, line in enumerate(io.open(path, encoding="utf-8"), 1):
+		c = cells(line)
+		if c is None or not is_verdict_head(c):
+			continue
+		if seen:
+			heads.append(n)
+		seen = True
+	return heads
 
 
 HEAD = "| 報告書 | 件 | 状態 | 内容 |" + "\n" + "| --- | --- | --- | --- |"
@@ -99,6 +140,8 @@ def main(d, write=False):
 	files = sorted(f for f in os.listdir(d) if f.endswith(".md") and f != "HANDOVER.md")
 	bulk = {f for f in files if declares_commits(os.path.join(d, f))}
 	rows = [(f, r) for f in files for r in parse(os.path.join(d, f))]
+	split = [(f, extra_verdict_tables(os.path.join(d, f))) for f in files]
+	split = [(f, h) for f, h in split if h]
 	if not rows:
 		print("裁定表が見つからない: %s" % d)
 		return 2
@@ -134,9 +177,14 @@ def main(d, write=False):
 		tally[r[1]] = tally.get(r[1], 0) + 1
 	print("\n## 集計 全 %d 件（報告書 %d 本）" % (len(rows), len(files)))
 	print("   " + "  ".join("%s %d" % kv for kv in sorted(tally.items())))
+	if split:
+		print("\nNG: 裁定表が2つ以上ある報告書がある。2つ目以降は集計されないので、"
+		      "行を先頭の裁定表へ移す（PLAYBOOK: 裁定表は先頭に1つだけ置く）。")
+		for f, heads in split:
+			print("    %s: L%s" % (f, ", L".join(str(h) for h in heads)))
 	if nohash:
 		print("\nNG: 対応済なのにハッシュが無い行がある。適用したコミットの短縮ハッシュを書く。")
-	return 1 if nohash else (0 if not open_n else 0)
+	return 1 if (nohash or split) else 0
 
 
 def selftest():

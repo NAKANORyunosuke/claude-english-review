@@ -8,7 +8,9 @@ Claude をオーケストレータとする数学論文(TeX)英文修正シス�
 - `PLAYBOOK.md` — オーケストレータ(Claude 本体)が従う実行手順書。フェーズ・裁定基準・収束条件・同期手順。
 - `templates/` — 並列サブエージェントに渡すプロンプト雛形。`{{...}}` を置換して使う。`templates/handover.md` だけは例外で、対象リポジトリに1本置く引き継ぎ資料の雛形。
 - `tools/apply_fixes.py` — 採用指摘の一括適用器(平坦一致アンカー、dry-run/apply)。
-- `tools/coinage_scan.py` — 造語候補スキャン(「the+複合名詞句」の承認外・低頻度句)。
+- `tools/apply_renames.py` — 記号の改名を JSON の指示書どおりに当てる。事前のヒット数アサート、上付き・下付きの括りの破損検出、範囲内の旧トークン残存の確認。指示書がファイルなのでシェルを経由せず、TeX のバックスラッシュが壊れない。`py tools/apply_renames.py <file.tex> <renames.json> [--apply]`。
+- `tools/symbol_depgraph.py` — 記号の全数抽出と初出/定義の突き合わせ(未定義・前方参照・二重定義・正順)。複数行 display の内側も数式として扱い、定義の合図は記号の直前40文字に限る。`py tools/symbol_depgraph.py <file.tex> [最小出現回数]`。
+- `tools/coinage_scan.py` — 造語候補スキャン(「the+複合名詞句」の承認外・低頻度句)。`py tools/coinage_scan.py <file.tex> [承認語ファイル]`。
 - `tools/glossary.py` — 単語帳生成(承認済み/emph定義/標準/先行研究/要審査に分類)。
 - `tools/ledger_gate.py` — 記号を変えたのに台帳を直していないコミットを止めるゲート。原稿の記号集合の変化だけを見るので偽陽性がほぼ無く、記号を触っていなければ何も言わない。`py tools/ledger_gate.py <file.tex> <ledger.md>`。
 - `tools/ledger_check.py` — 台帳と原稿の突き合わせ。既にある乖離を洗う。偽陽性が残るので基準値と比べる。
