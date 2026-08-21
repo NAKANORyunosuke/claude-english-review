@@ -112,6 +112,31 @@ trailer は使わない(多くのプロジェクト規約が禁じている)。�
 `applied:` の件番号は報告書の裁定表の番号と一致させる。1コミットに複数の報告書が混ざる回は
 `review:` を複数行書いてよい。
 
+### このプラグインを直したら版を上げる
+
+**規則かツールを足した・直したコミットの後は、`.claude-plugin/plugin.json` の `version` を
+必ず上げる。**上げないと、直したこと自体が届かない。
+
+スキルが実際に読むのは `~/.claude/plugins/cache/english-review/english-review/<版>/` に置かれた
+**スナップショット**であり、このリポジトリ(`marketplaces/` 側)とは別物である。導入の記録は
+版で引くので、中身をいくら変えても版が同じなら「更新なし」と判定され、cache は作り直されない。
+`/reload-plugins` も既にディスクにあるものを読み直すだけで、取り直しはしない。
+
+2026-08-22 にこれが実害になった。cache 側は 2026-08-21 の commit で止まっており、`tools/` が
+10本しか無く、`apply_renames.py`・`symbol_depgraph.py`・`finding_db.py`・`structure_db.py` の
+4本と PLAYBOOK の追記が届いていなかった。**ラウンド4 で潰した欠陥が無い状態から次の点検が
+始まる**ところだった。
+
+版を上げたあと、導入側へ反映する手順は次の2つである。
+
+```
+claude plugin marketplace update english-review
+claude plugin update english-review@english-review
+```
+
+`claude plugin update english-review` は marketplace 名を省くと `not found` になる。
+反映は次回起動から効く。
+
 ## 引き継ぎ資料(対象リポジトリごとに1本)
 
 報告書は点検1回につき1本で、後から書き換えない。残件も棄却の記録もその数だけ散る。
