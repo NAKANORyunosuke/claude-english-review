@@ -1,0 +1,13 @@
+{
+  "name": "english-review",
+  "owner": {
+    "name": "NAKANORyunosuke"
+  },
+  "plugins": [
+    {
+      "name": "english-review",
+      "source": "./",
+      "description": "数学論文の英文を直すときの誤り型カタログ・記法規則・全文点検の実行手順"
+    }
+  ]
+}
