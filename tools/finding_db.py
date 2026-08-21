@@ -39,6 +39,8 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 ROW = re.compile(r"^\|\s*([A-Z]+[0-9]+)\s*\|\s*([^|]+?)\s*\|\s*([^|]*?)\s*\|")
 HUNK = re.compile(r"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@")
+# 状態欄に既にコミットのハッシュが入っているか。入っていれば触らない。
+HASH = re.compile(r"\b[0-9a-f]{7,40}\b")
 ANCHOR_LEN = 72
 # 報告書ではないもの。裁定表の形をしていても指摘ではない。
 SKIP = {"HANDOVER.md", "PROCESS-DEFECTS.md"}
@@ -161,6 +163,33 @@ def cmd_shift(dbp, at, deleted, added):
 	return 0
 
 
+def cmd_retext(dbp, pairs):
+	"""アンカーの文面に同じ置換を当てる。
+
+	記号の改名は「その指摘を片づけた」ことを意味しない。無関係な指摘のアンカーに
+	旧記号が入っているだけで、改名するとアンカーが引けなくなる。改名と同じ置換を
+	アンカーにも当てて追随させる。
+
+	これは apply_fixes の後に verify を走らせるのとは意味が違う。指摘を当てて対象の
+	文が消えたのなら、アンカーは消失してよい(それが「片づいた」という情報である)。
+	"""
+	db = load(dbp)
+	n = 0
+	for f in db["findings"]:
+		a = f.get("anchor")
+		if not a:
+			continue
+		b = a
+		for old, new in pairs:
+			b = b.replace(old, new)
+		if b != a:
+			f["anchor"] = b
+			n += 1
+	save(dbp, db)
+	print("改名に合わせてアンカー %d 件を書き換えた。" % n)
+	return 0
+
+
 def cmd_sync(dbp, tex, since):
 	"""git 履歴の hunk から shift をまとめて再生する。"""
 	rel = os.path.relpath(os.path.abspath(tex), _repo_root(tex))
@@ -187,9 +216,14 @@ def cmd_sync(dbp, tex, since):
 
 def cmd_status(dbp, since):
 	"""コミット本文の applied: 行を読んで状態を更新する(PLAYBOOK のコミット規約)。"""
-	root = os.path.dirname(os.path.abspath(dbp))
+	# DB の置き場所をそのまま git の作業ディレクトリにしない。DB を別の場所へ写して
+	# 試したときに git が黙って失敗し、「0 件」とだけ出て原因が見えなくなる。
+	root = _repo_root(dbp)
 	log = subprocess.run(["git", "log", "--format=%h%x00%B%x01", "%s..HEAD" % since],
 	                     cwd=root, capture_output=True, text=True, encoding="utf-8")
+	if log.returncode != 0:
+		print("git log に失敗した(%s): %s" % (root, log.stderr.strip().split("\n")[0]))
+		return 1
 	db = load(dbp)
 	by_key = {}
 	for f in db["findings"]:
@@ -228,7 +262,8 @@ USAGE = """使い方:
   py finding_db.py verify <db.json> <tex>
   py finding_db.py shift  <db.json> <at> <deleted> <added>
   py finding_db.py sync   <db.json> <tex> <since-commit>
-  py finding_db.py status <db.json> <since-commit>"""
+  py finding_db.py status <db.json> <since-commit>
+  py finding_db.py retext <db.json> <old> <new>          アンカーの文面に置換を当てる"""
 
 if __name__ == "__main__":
 	a = sys.argv[1:]
@@ -246,5 +281,7 @@ if __name__ == "__main__":
 		sys.exit(cmd_sync(a[1], a[2], a[3]))
 	if c == "status" and len(a) >= 3:
 		sys.exit(cmd_status(a[1], a[2]))
+	if c == "retext" and len(a) >= 4:
+		sys.exit(cmd_retext(a[1], [(a[2], a[3])]))
 	print(USAGE)
 	sys.exit(2)

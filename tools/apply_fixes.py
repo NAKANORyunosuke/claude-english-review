@@ -25,7 +25,7 @@ def flat(s):
 	return "".join(s.split())
 
 
-def run(cfg_path, mode):
+def run(cfg_path, mode, db=None):
 	cfg = json.load(io.open(cfg_path, encoding="utf-8"))
 	path = cfg["file"]
 	lines = io.open(path, encoding="utf-8").read().split("\n")
@@ -70,8 +70,28 @@ def run(cfg_path, mode):
 	nl = "\r\n" if raw.count(b"\r\n") > raw.count(b"\n") - raw.count(b"\r\n") else "\n"
 	io.open(path, "w", encoding="utf-8", newline=nl).write(body)
 	print("applied")
+	if db:
+		# 指摘を当てると行数が変わり、以降の行番号が全部ずれる。アンカーで引き直す。
+		# ここで「消失」と出る件は、その指摘の対象の文が消えたということであり、
+		# 片づいた証拠である。改名(apply_renames)と違ってアンカーは追随させない。
+		import os
+		sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+		import finding_db
+		print("\n-- 指摘 DB の位置を引き直す --")
+		finding_db.cmd_verify(db, path)
 	return 0
 
 
 if __name__ == "__main__":
-	sys.exit(run(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else "count"))
+	argv, a, db = sys.argv[1:], [], None
+	i = 0
+	while i < len(argv):
+		if argv[i] == "--db" and i + 1 < len(argv):
+			db, i = argv[i + 1], i + 2
+			continue
+		a.append(argv[i])
+		i += 1
+	if not a:
+		print("使い方: py apply_fixes.py <fixes.json> count|apply [--db <findings.json>]")
+		sys.exit(2)
+	sys.exit(run(a[0], a[1] if len(a) > 1 else "count", db))

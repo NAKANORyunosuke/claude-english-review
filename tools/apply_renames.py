@@ -66,7 +66,7 @@ def finder(job):
 	return lambda s: s.count(old), lambda s: s.replace(old, job["new"])
 
 
-def main(tex, spec, apply=False):
+def main(tex, spec, apply=False, db=None):
 	src = io.open(tex, encoding="utf-8", newline="").read()
 	nl = "\r\n" if "\r\n" in src else "\n"
 	lines = src.split(nl)
@@ -136,12 +136,36 @@ def main(tex, spec, apply=False):
 		return 0
 	io.open(tex, "w", encoding="utf-8", newline="").write(out)
 	print("\n適用した。")
+	if db:
+		_retext_db(db, cfg)
 	return 0
 
 
+def _retext_db(dbp, cfg):
+	"""指摘 DB のアンカーを改名に追随させる。
+
+	改名は行数を変えないので行番号はずれない。ずれるのはアンカーの文面のほうで、
+	放っておくと次の verify が、まだ片づいていない指摘を「消失」と報告する。
+	"""
+	import os
+	sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+	import finding_db
+	pairs = [(j["old"], j["new"]) for j in cfg["jobs"] if "old" in j and "new" in j]
+	print("\n-- 指摘 DB のアンカーを追随させる --")
+	finding_db.cmd_retext(dbp, pairs)
+
+
 if __name__ == "__main__":
-	a = [x for x in sys.argv[1:] if not x.startswith("--")]
+	argv, a, db = sys.argv[1:], [], None
+	i = 0
+	while i < len(argv):
+		if argv[i] == "--db" and i + 1 < len(argv):
+			db, i = argv[i + 1], i + 2
+			continue
+		if not argv[i].startswith("--"):
+			a.append(argv[i])
+		i += 1
 	if len(a) < 2:
-		print(__doc__ or "使い方: py apply_renames.py <tex> <renames.json> [--apply]")
+		print("使い方: py apply_renames.py <tex> <renames.json> [--apply] [--db <findings.json>]")
 		sys.exit(2)
-	sys.exit(main(a[0], a[1], "--apply" in sys.argv))
+	sys.exit(main(a[0], a[1], "--apply" in sys.argv, db))
