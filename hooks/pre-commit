@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# 配布物を変えたのに版を上げていない commit を止める。
+#
+# 有効にする(クローンごとに1回。core.hooksPath は追跡されないので両方の PC で要る):
+#   git config core.hooksPath hooks
+#
+# 通したいときだけ:
+#   git commit --no-verify
+set -u
+
+for py in py python3 python; do
+	if command -v "$py" >/dev/null 2>&1; then
+		exec "$py" tools/version_gate.py
+	fi
+done
+
+echo "python が見つからないので版の検査を飛ばした。" >&2
+exit 0

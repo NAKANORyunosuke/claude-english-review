@@ -1,1 +1,6 @@
 * text=auto eol=crlf
+
+# bash が読むものは LF。CRLF で checkout されると、行末の復帰文字がコマンド名に
+# くっついて落ちる。Windows 2台で使うので checkout 側で効かせる必要がある。
+*.sh text eol=lf
+hooks/pre-commit text eol=lf
