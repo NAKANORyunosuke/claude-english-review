@@ -83,7 +83,11 @@ def make_anchor(line):
 
 def cmd_init(review_dir, tex, out):
 	tl = lines_of(tex)
-	db = {"tex": os.path.abspath(tex), "sha": sha(tex), "findings": []}
+	# 原稿の場所は**リポジトリ相対**で持つ。DB は追跡してコミットするので、絶対パスを
+	# 書くと環境固有の値が git に入る(`C:\Users\<名前>\...` と `D:\Workspace\...` は
+	# 機械ごとに違う)。多くのプロジェクト規約が追跡ファイルへの絶対パスを禁じている。
+	db = {"tex": os.path.relpath(os.path.abspath(tex), _repo_root(tex)).replace("\\", "/"),
+	      "sha": sha(tex), "findings": []}
 	for fn in sorted(f for f in os.listdir(review_dir) if f.endswith(".md") and f not in SKIP):
 		seen = False
 		for raw in io.open(os.path.join(review_dir, fn), encoding="utf-8"):
