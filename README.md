@@ -20,10 +20,30 @@ Claude をオーケストレータとする数学論文(TeX)英文修正シス�
 - `rules/writing-guide.md` — 新規執筆・翻訳用の文体仕様(声と時制・骨格・構成・用語衛生・禁止事項)。プロジェクト固有の規則ファイルが無い場合の既定。
 - `rules/phrasebook.md` — 機能別フレーズ集(Trzeciak, Writing Mathematical Papers in English の抜粋。原本 PDF は同梱せずパス参照)。**規則の優先順位**: プロジェクト規約・writing-guide > phrasebook(相違点は phrasebook 末尾に列挙。文体の禁止事項は guide が勝つ)。
 
+## 届き方(2026-08-21 からプラグイン)
+
+このリポジトリは Claude Code のプラグインとして配信される。対象プロジェクトに規則の写しを
+置かない。写すと双方が別々に育ち、片方にしか無い規則ができる(実際にそうなり、2026-08-21 に
+手続き規則5項を救出してから写しを削除した)。
+
+```json
+"extraKnownMarketplaces": {
+  "english-review": { "source": { "source": "github", "repo": "NAKANORyunosuke/claude-english-review" }, "autoUpdate": true }
+},
+"enabledPlugins": { "english-review@english-review": true }
+```
+
+入ると `math-english-review` スキルが description で発火する。英文を1文でも書く・直すときは
+何も指示しなくてよい。明示的に呼ぶなら `/math-english-review`。
+
+文体の上位規範(`mathematical-writing.md`、`matsumoto-style-guide.md`)は別プラグイン
+`english-bible` が持つ。役割は重ならない。**こちらは直し方と回し方、向こうは書き方。**
+
 ## 前提
 
-- 対象プロジェクトに執筆規則ファイルがあること(誤り型カタログと用語規則。例: `english-writing-rules.md`、`terminology-rules.md`)。
-- 機械監査スクリプト(banned リスト付き)が CLEAN を返す状態から開始する。
+- **プロジェクト側に置くもの**: 承認済み用語の一覧、banned リスト、日本語文書の一覧。
+  規則の型はこのリポジトリにあり、値はプロジェクトにある(`rules/terminology-rules.md` 末尾)。
+- 機械監査(`tex-style-audit` スキル + プロジェクトの banned リスト)が CLEAN を返す状態から開始する。
 - 一文一行の TeX であること(行単位の指摘・置換が前提)。
 
 ## クイックスタート
@@ -31,6 +51,14 @@ Claude をオーケストレータとする数学論文(TeX)英文修正シス�
 1. `config.example.json` を対象プロジェクト用にコピーして書き換える。
 2. Claude に「PLAYBOOK.md に従って <config> の論文の英文修正を回して」と指示する。
 3. Claude がフェーズ 0(序文・記号の確定)→ A(分割点検)→ B(用語・造語・構成)→ C(同期・検証)を収束まで反復する。
+
+**英文の機械検査がゼロでも収束ではない。**プリアンブルのマクロ、記号の全数抽出、
+`tools/depgraph.py`、節冒頭の並びは分割読みの視野の外にあり、英文が収束したあとから出る。
+フェーズ B を別に回すこと。
+
+**数学的判断は外に出す。**記号が何を指すか、主張の射程、用語の改名は Claude が単独で決めない。
+読み取り専用で照会し、返ってきた置換文は**当てる前に英文点検を通す**(`rules/english-writing-rules.md`
+§3-11。数学的に正しくても英文としては未点検の文が返ってくる)。
 
 ## 設計原則
 
