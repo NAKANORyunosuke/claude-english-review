@@ -1,7 +1,7 @@
 {
   "name": "english-review",
   "description": "数学論文(TeX)の英文修正システム。実点検446件から作った誤り型カタログ、記法規則、全文点検のオーケストレーション手順、適用ツールを提供する",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": {
     "name": "NAKANORyunosuke"
   }

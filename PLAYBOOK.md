@@ -112,13 +112,20 @@ trailer は使わない(多くのプロジェクト規約が禁じている)。�
 `applied:` の件番号は報告書の裁定表の番号と一致させる。1コミットに複数の報告書が混ざる回は
 `review:` を複数行書いてよい。
 
-### このプラグインを直したら版を上げる
+### このプラグインを直すときは、開発クローンで直して版を上げる
+
+**書く場所は開発クローンである。**`~/.claude/plugins/marketplaces/english-review/` には書かない。
+そこは `claude plugin marketplace update` が git pull する**プラグインシステムの管理下**であり、
+未 push のコミットを置くと失う経路がある。2026-08-22 に8コミット分をそちらへ入れてしまった
+(毎回 push していたので実害は出なかったが、同じ remote を指す作業コピーが2つある状態だった)。
+
+一方向に流す。**開発クローン → origin → marketplaces → cache。**逆流させない。
 
 **規則かツールを足した・直したコミットの後は、`.claude-plugin/plugin.json` の `version` を
 必ず上げる。**上げないと、直したこと自体が届かない。
 
 スキルが実際に読むのは `~/.claude/plugins/cache/english-review/english-review/<版>/` に置かれた
-**スナップショット**であり、このリポジトリ(`marketplaces/` 側)とは別物である。導入の記録は
+**スナップショット**であり、開発クローンとも `marketplaces/` とも別物である。導入の記録は
 版で引くので、中身をいくら変えても版が同じなら「更新なし」と判定され、cache は作り直されない。
 `/reload-plugins` も既にディスクにあるものを読み直すだけで、取り直しはしない。
 
@@ -127,7 +134,7 @@ trailer は使わない(多くのプロジェクト規約が禁じている)。�
 4本と PLAYBOOK の追記が届いていなかった。**ラウンド4 で潰した欠陥が無い状態から次の点検が
 始まる**ところだった。
 
-版を上げたあと、導入側へ反映する手順は次の2つである。
+開発クローンで commit と push を済ませたあと、導入側へ反映する手順は次の2つである。
 
 ```
 claude plugin marketplace update english-review
@@ -136,6 +143,9 @@ claude plugin update english-review@english-review
 
 `claude plugin update english-review` は marketplace 名を省くと `not found` になる。
 反映は次回起動から効く。
+
+`marketplace update` は開発クローンではなく `marketplaces/` 側を origin から引き直す。
+**push を先に済ませていないと、そこで古い内容が入る。**順序を入れ替えない。
 
 ## 引き継ぎ資料(対象リポジトリごとに1本)
 
