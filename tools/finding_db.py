@@ -81,6 +81,60 @@ def make_anchor(line):
 	return s
 
 
+def split_cells(raw):
+	"""表の行をセルに割る。行内数式の `|` を区切りと誤認しない。
+
+	`\\(|\\bu|\\)` のような絶対値は `|` を含む。素朴に split すると
+	`\\( / \\bu / \\)` の3セルに化ける(review_status.py で実際に起きた)。
+	数式を伏せて位置を決め、値は元の文字列から切り出す。
+	"""
+	masked = re.sub(r"\\\(.*?\\\)", lambda m: "\x00" * len(m.group(0)), raw.rstrip("\n"))
+	out, pos = [], 0
+	for part in masked.split("|"):
+		out.append(raw[pos:pos + len(part)].strip())
+		pos += len(part) + 1
+	while out and out[0] == "":
+		out.pop(0)
+	while out and out[-1] == "":
+		out.pop()
+	return out
+
+
+def tables(path):
+	"""表を切り出して (見出しセル, 行のリスト) で返す。"""
+	found, head, body, sep = [], None, [], False
+	for raw in io.open(path, encoding="utf-8"):
+		if raw.lstrip().startswith("|"):
+			cells = split_cells(raw)
+			if head is None:
+				head, body, sep = cells, [], False
+			elif not sep and all(set(c) <= set("-: ") for c in cells):
+				sep = True
+			else:
+				body.append(cells)
+		elif head is not None:
+			found.append((head, body))
+			head, body, sep = None, [], False
+	if head is not None:
+		found.append((head, body))
+	return found
+
+
+def verdict_tables(path):
+	"""裁定表を選ぶ。件と状態の両方を持つ表がそれである。
+
+	報告書には裁定表でない表も載る(「Claude が単独で下していた判断」「Codex の裁定」など)。
+	`| 記号 数字 |` で始まる行を全部拾うと、それらの行まで指摘として取り込んでしまう。
+	実際 2026-08-17-02 では3つの表のうち2つが裁定表ではなかった。
+
+	**該当する表は全部使う。**別の点検パスが独自の件番号で裁定表を持つことがある
+	(2026-08-15-front-matter の数学的検証 V1・V2)。先頭だけを見るとその分が落ちる。
+	PLAYBOOK が禁じているのは**同じ指摘群を複数の表に割ること**(欠陥 A3)であり、
+	その症状は件番号の重複として出る。表の数ではなく重複を見る。
+	"""
+	return [t for t in tables(path) if "件" in t[0] and any(c.startswith("状態") for c in t[0])]
+
+
 def cmd_init(review_dir, tex, out):
 	tl = lines_of(tex)
 	# 原稿の場所は**リポジトリ相対**で持つ。DB は追跡してコミットするので、絶対パスを
@@ -89,23 +143,39 @@ def cmd_init(review_dir, tex, out):
 	db = {"tex": os.path.relpath(os.path.abspath(tex), _repo_root(tex)).replace("\\", "/"),
 	      "sha": sha(tex), "findings": []}
 	for fn in sorted(f for f in os.listdir(review_dir) if f.endswith(".md") and f not in SKIP):
-		seen = False
-		for raw in io.open(os.path.join(review_dir, fn), encoding="utf-8"):
-			m = ROW.match(raw)
-			if not m:
-				continue
-			key, state, where = m.group(1), m.group(2), m.group(3)
-			if key in ("件",):
-				continue
-			seen = True
-			n = first_line_number(where)
-			anchor = make_anchor(tl[n - 1]) if n and 0 < n <= len(tl) else None
-			db["findings"].append({
-				"report": fn[:-3], "key": key, "state": state.strip(),
-				"line": n, "anchor": anchor,
-			})
-		if not seen:
+		vts = verdict_tables(os.path.join(review_dir, fn))
+		if not vts:
 			print("  (裁定表なし) %s" % fn)
+			continue
+		seen = set()
+		for head, rows in vts:
+			# 列は見出しで引く。位置で決め打ちしない。報告書ごとに列構成が違い、
+			# 3列目を無条件に「行」として読むと、内容欄の散文から数字を拾って
+			# 行番号にしてしまう(2026-08-15-front-matter の23件がそうなっていた)。
+			def col(*names):
+				for i, h in enumerate(head):
+					if any(h.startswith(nm) for nm in names):
+						return i
+				return None
+			ik, ist, iln, itx = col("件"), col("状態"), col("行"), col("内容")
+			for cells in rows:
+				if ik is None or ik >= len(cells):
+					continue
+				key = cells[ik]
+				if not re.match(r"^[A-Z]+[0-9]+$", key):
+					continue
+				if key in seen:
+					print("  警告 %s の %s が2箇所の裁定表にある。同じ指摘群を分けている(欠陥 A3)。"
+					      % (fn, key))
+					continue
+				seen.add(key)
+				get = lambda i: cells[i] if i is not None and i < len(cells) else None
+				n = first_line_number(get(iln)) if iln is not None else None
+				anchor = make_anchor(tl[n - 1]) if n and 0 < n <= len(tl) else None
+				db["findings"].append({
+					"report": fn[:-3], "key": key, "state": (get(ist) or "").strip(),
+					"line": n, "anchor": anchor, "text": get(itx),
+				})
 	io.open(out, "w", encoding="utf-8").write(json.dumps(db, ensure_ascii=False, indent=1))
 	live = sum(1 for f in db["findings"] if f["anchor"])
 	print("DB を作った: %s" % out)
