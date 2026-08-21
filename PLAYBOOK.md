@@ -124,6 +124,18 @@ trailer は使わない(多くのプロジェクト規約が禁じている)。�
 **規則かツールを足した・直したコミットの後は、`.claude-plugin/plugin.json` の `version` を
 必ず上げる。**上げないと、直したこと自体が届かない。
 
+**これは検査で止める。**規則があっても人が読まないと守られないので、`ledger_gate.py` と
+同じ扱いにした。クローンごとに1回、次を実行する。
+
+```
+git config core.hooksPath hooks
+```
+
+`hooks/pre-commit` が `tools/version_gate.py` を呼び、配布物(`tools/` `rules/` `skills/`
+`templates/` `db/` `hooks/` `PLAYBOOK.md` `config.example.json`)が変わっているのに版が
+上がっていなければ commit を止める。**`core.hooksPath` は追跡されないので、PC ごとに要る。**
+既に入ったコミットをまとめて見るときは `py tools/version_gate.py <A>..<B>`。
+
 スキルが実際に読むのは `~/.claude/plugins/cache/english-review/english-review/<版>/` に置かれた
 **スナップショット**であり、開発クローンとも `marketplaces/` とも別物である。導入の記録は
 版で引くので、中身をいくら変えても版が同じなら「更新なし」と判定され、cache は作り直されない。
