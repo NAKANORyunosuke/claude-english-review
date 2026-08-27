@@ -1,0 +1,4 @@
+# tools/ を python が読むと隣に置かれる。配布物ではないし、
+# marketplaces のクローンでも湧いて status を汚す。
+__pycache__/
+*.pyc
