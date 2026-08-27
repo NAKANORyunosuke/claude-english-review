@@ -1,9 +1,14 @@
 # 英文執筆規則(Codex 等の生成エージェント向け)
 
 本文の英語を1文でも書く・直すときに適用する。
-根拠は 2026-08-07 に Paper I 正本 5944 行を12分割して行った全文点検で、446 件の指摘が出た。
-1.1--1.10 は**実際にこの原稿で起きたもの**であり、頻度順に並べてある。1.11 は文体方針として足したもの。
-用語(造語禁止)は `terminology-rules.md`、体裁は `CLAUDE.md` 規約1--14 を先に満たすこと。
+根拠は 2026-08-07 に A-超幾何の障害論文の正本 5944 行を12分割して行った全文点検で、446 件の指摘が出た。
+1.1--1.10 は**実際にその原稿で起きたもの**であり、頻度順に並べてある。1.11 は文体方針として足したもの。
+分野が違っても型は転用できるので、実例は記号ごとそのまま載せてある。文献キーは `\cite{X}` に伏せた。
+用語(造語禁止)は `terminology-rules.md`、記法は `notation-rules.md` を先に満たすこと。
+
+**プロジェクト側で埋めるもの**は4つある。体裁の規約(一文一行、句読点、ハイフン等)、§4 の自己検査
+コマンド(config の `audit` と `build`)、正本と派生物の同期手順、そしてその原稿で新しく出た誤り型の
+追記先(config の `local_rules`)である。それ以外はどのプロジェクトでも同じ。
 
 ---
 
@@ -59,7 +64,7 @@
 
 - 悪い: `The index set of \(m_{\bv,\mathcal N}\) is independent of \(B\), while its polynomial expression depends on \(B\).`
 - 良い: `The index set of \(m_{\bv,\mathcal N}\) is independent of \(B\), but the polynomial expression of \(m_{\bv,\mathcal N}\) depends on \(B\).`
-- 悪い: `Nagamine \cite{Nag26} studies the local fake indicial inverse system, while the present paper studies the quotient ...`
+- 悪い: `\cite{X} studies the local fake indicial inverse system, while the present paper studies the quotient ...`
 - 良い: 2文に分割する。
 
 ### 1.6 冠詞(26件)
@@ -95,10 +100,10 @@
 
 **先行研究から輸入した対象を `we fix` / `we choose` で書かない。** 自分が固定したものと引いてきたものを、動詞で区別する。
 
-- 悪い: `In this section, we fix the periods by choosing the differential \(dz/w\) and the homology marking.`(サイクル・周期写像は MT04 から引いている)
-- 良い: `In this section, we fix the branch of \(w\) and recall the automorphic forms \(f_J\) of \cite{MMN07}.`
+- 悪い: `In this section, we fix the periods by choosing the differential \(dz/w\) and the homology marking.`(サイクル・周期写像は \cite{X} から引いている)
+- 良い: `In this section, we fix the branch of \(w\) and recall the automorphic forms \(f_J\) of \cite{X}.`
 - 判定手順: その対象の定義箇所に `\cite` が付いているか、`Fact` 環境で輸入されていないかを確認する。付いていれば `recall` / `is defined in \cite{X}` を使う。
-- 先行研究の**規約を採用する**ときは `we fix` のままでよいが、採用元を付ける: `we fix the branch of \(w\) as in \cite[Section 2]{MT04} by ...`。明示形が別の文献にあるならそれも分けて引く(`this explicit form is given in \cite[Proposition 1]{MT02}`)。
+- 先行研究の**規約を採用する**ときは `we fix` のままでよいが、採用元を付ける: `we fix the branch of \(w\) as in \cite[Section 2]{X} by ...`。明示形が別の文献にあるならそれも分けて引く(`this explicit form is given in \cite[Proposition 1]{Y}`)。
 - 引用の落ちた導入文は、その対象が後の `Fact` から `as fixed above` の形で参照されているときに見つかる。`Fact` の引用先と、参照先の地の文の引用の有無を突き合わせる。
 
 - 悪い: `Theorem X requires the linear forms to form a regular sequence.`(定理は仮定していない、導いている)
@@ -131,9 +136,9 @@
 - コンマ列挙を `and` で閉じる: 悪い `\(t_3^2+t_3t_6, \qquad 2t_3^2+t_3t_6\)` → 良い `... \qquad\text{and}\qquad ...`
 - マクロの不統一・記号の設計は `notation-rules.md` へ移した(`\mathbb Z` と `\Z` の混在、添字、アクセント、命名)。
 
-以下は Chapter 2 の改訂で人間が直した型(指摘データ由来ではない)。
+以下は Thomae 型公式の論文の改訂で人間が直した型(指摘データ由来ではない)。
 
-- 引用は番号付きの結果で引く: 悪い `\cite[pp.~120--136]{Mum07b}` → 良い `\cite[Proposition 3.6]{Fay73}`。ページ範囲でしか引けない文献は、引き先を変えられないか検討する。
+- 引用は番号付きの結果で引く: 悪い `\cite[pp.~120--136]{X}` → 良い `\cite[Proposition 3.6]{Y}`。ページ範囲でしか引けない文献は、引き先を変えられないか検討する。
 - 既出の等式を言い換えるだけの文は削る: 悪い `Since \(\vartheta_{00}(i) = \pi^{1/4}/\varGamma(3/4)\), the constant \(\kappa\) is expressed in terms of \(\varGamma(3/4)\).` → 良い `Here we use the formula \(\vartheta_{00}(i) = \pi^{1/4}/\varGamma(3/4)\) to express \(\kappa\) in terms of \(\varGamma(3/4)\).`(2文が1文になる)
 - 自分の正規化の意義を述べる文は削る: 悪い `The constant \(\kappa\) fixes the values of the forms for the normalization of the periods made in Section~\ref{sec:preliminaries}, and it permits comparison with ...` → 良い `The constant \(\kappa\) permits comparison with ...`
 
@@ -145,7 +150,7 @@
 
 1. **完全な文を出力する。** 直したい語句だけでなく、**その行全体**を差し替え可能な形で書く。断片や「この語をこう変える」という指示文を出力しない。
 2. **節を落とさない。** 元の行にある `\ref` / `\eqref` / `\cite` / 数式 / `\item` は、直後の文へ移すか、そのまま残す。1文が長すぎるなら**2文に分割**し、両方の内容を保つ。
-3. **一文一行を守る。** 分割したら改行して2行にする(`CLAUDE.md` 規約1)。
+3. **一文一行を守る。** 分割したら改行して2行にする(プロジェクト規約が一文一行を定めているとき)。
 4. **英語修正の依頼で数学を足さない。** 新しい主張・新しい仮定・新しい記号を導入しない。必要だと思ったら本文を変えずに指摘だけする。
 5. **用語を新造しない。** `terminology-rules.md` の命名手続きを通す。
 6. **1文を2文に割ったら、割った後の文にある指示語と定冠詞句の先行詞を必ず数え直す。** 分割は先行詞を1文分遠ざけるので、`this` / `these conditions` / `the preceding sentence` / `the quotient` の指し先がずれる。2026-08-15 のラウンド2で出た退行31件の大半がこれと次項だった。
@@ -161,11 +166,12 @@
 
 提出前に必ず次を実行し、すべて通ってから完了とする。
 
-```
-py "C:\Users\toppo\.claude\skills\tex-style-audit\audit_tex.py" <file.tex> --banned "C:\Users\toppo\.claude\skills\tex-style-audit\banned-terms-nagamine.txt"
-```
+コマンドは config から取る。プロジェクトごとにパスも banned リストもビルド系も違うので、
+ここに直書きしない。
 
-- audit が `CLEAN` であること。
-- `pdflatex` を2回通し、**Overfull 0・未定義参照 0** であること。
-- 正本を直したら arXiv 版へ同じ数学的内容を反映すること(`CLAUDE.md` 同期チェックリスト)。
-- 自分が書いた文を読み返し、上の11型を1つずつ当てること。特に 1.1(代名詞)と 1.5(while)は機械的に grep できる。1.11(長い主語)は最初の動詞までの語数を数える。
+- config の `audit` を実行し、`CLEAN` であること。既知の偽陽性を持つプロジェクトでは、
+  banned リスト冒頭に記録したその件数以下であること。
+- config の `build` を `build_passes` 回通し、**Overfull 0・未定義参照 0** であること。
+- 正本を直したら config の `derived` に挙がっている派生物へ同じ数学的内容を反映すること。
+  マクロが違う派生物には `git apply` が使えないので、用語と記法だけを合わせる。
+- 自分が書いた文を読み返し、上の11型と、config の `local_rules` にその原稿固有の型があればそれも1つずつ当てること。特に 1.1(代名詞)と 1.5(while)は機械的に grep できる。1.11(長い主語)は最初の動詞までの語数を数える。

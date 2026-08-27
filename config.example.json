@@ -4,7 +4,10 @@
 		"tex には投稿する正本を書く。研究ノートや旧版を指したまま使うと、点検が",
 		"公開しない文書に向かって空回りする。derived は正本から生成する派生物。",
 		"approved_terms は廃止した用語を残さない。残すと coinage_scan.py がその語を",
-		"造語候補から除外してしまい、廃止語の残存を検出できない。"
+		"造語候補から除外してしまい、廃止語の残存を検出できない。",
+		"rules/term_rules/notation_rules は plugin を指したまま動かさない。プロジェクト固有の",
+		"誤り型は local_rules へ、承認済み用語・輸入語・固有の語感は local_terms へ、それぞれ",
+		"repo 内のファイルとして置く。規範をコピーして書き足すと更新経路が切れる。"
 	],
 	"project": "<プロジェクト名>",
 	"tex": "<repo>/paper/paper-arxiv.tex",
@@ -12,6 +15,8 @@
 	"rules": "<plugin>/rules/english-writing-rules.md",
 	"term_rules": "<plugin>/rules/terminology-rules.md",
 	"notation_rules": "<plugin>/rules/notation-rules.md",
+	"local_rules": [],
+	"local_terms": [],
 	"style_source": [
 		"<EnglishBible>/mathematical-writing.md",
 		"<EnglishBible>/matsumoto-style-guide.md"
