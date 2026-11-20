@@ -20,6 +20,11 @@
 #      → residual に文字を挙げると、その範囲に独立トークンが無いことを確認する。
 #   5. 事後アサートに新記号の個数を決め打ちして、その値のほうが間違っている
 #      → 事後は「旧が消えたか」「壊れていないか」だけを見る。個数は書かせない。
+#   6. 新しい記号が旧い記号を含む改名(X_ -> \mathcal X_、F^rK(A) -> \mathcal F^rK(A))で、
+#      置換は済んでいるのに「旧記号が残存」と判定して止まる(2026-11-21、2回)
+#      → 残存を数える前に、旧い記号を含む新しい記号を伏せる。
+#   7. 同じ対象の添字違い(P_s と P_b, P_d)を範囲指定で取りこぼす(2026-11-21)
+#      → 道具では防げない。指示書を書く側が、改名する記号の基底(P_)で範囲を grep する。
 #
 # 指示書の形
 #   {
@@ -109,7 +114,15 @@ def main(tex, spec, apply=False, db=None):
 		if "old" not in j:
 			continue
 		count, _ = finder(j)
-		left = sum(count(lines[i]) for i in rows(lines, j))
+		# 新しい記号が旧い記号を含む改名(X_ -> \mathcal X_ など)では、置換が済んでも
+		# 旧い文字列が新しい記号の中に見える。旧い記号を含む新しい記号を伏せてから数える。
+		masks = [k["new"] for k in jobs if "old" in k and j["old"] in k["new"]]
+		left = 0
+		for i in rows(lines, j):
+			s = lines[i]
+			for m in masks:
+				s = s.replace(m, "\x00")
+			left += count(s)
 		must(left == 0, "%s: 範囲に旧記号の残存 0" % j["name"])
 
 	for j in jobs:
