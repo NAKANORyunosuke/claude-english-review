@@ -19,6 +19,7 @@
 - 証明は即行動で開始("Proof. We set ...")、段階は "First, ... Next, ... Finally, ..."、対称ケースは "in a similar way"、終端は □。
 - 文を記号で始めない。ディスプレイ式にも句読点。1文=1行(TeX ソース)。
 - 主語は動詞に届くまで8語以内。超えたら "we" 主語に組み替える → 仮主語 "It ... that ..." → 受動態で "by" 句へ送る、の順に試す(`english-writing-rules.md` 1.11)。
+- 証明は式で進める。写像の等式・合成・完全列・計算は式で書き、文は根拠と接続だけを担う("By X, we have \[...\] where ...")。"agrees with" / "followed by" / "the composite of" で関係を言葉にしない。論理の接続は言葉のまま(`english-writing-rules.md` 1.12)。
 
 ## 構成
 
